@@ -11,10 +11,18 @@ from sklearn.model_selection import RandomizedSearchCV, train_test_split
 from sklearn.multioutput import MultiOutputClassifier
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
-import pickle
 from joblib import dump
 
 def load_data(database_filepath):
+    """
+    Fuction to load data from the db file
+    Input:
+        database_filepath: db file name along with path
+    Output:
+        X: The feature attribute - message
+        Y: To be predicted values.
+        category_names: Name of columns
+    """
     # load data from database
     engine = sqlalchemy.create_engine('sqlite:///' + database_filepath)
     df = pd.read_sql_table("disaster_clean_data", con=engine)
@@ -25,6 +33,13 @@ def load_data(database_filepath):
 
 
 def tokenize(text):
+    """
+    Function to tokenize the text data.
+    Input:
+        text: Input text to be tokenized and cleaned.
+    Output:
+        clean_tokens: Clean text
+    """
     text = re.sub('[^A-Za-z0-9]', ' ', text)
     tokens = word_tokenize(text)
     lemmatizer = WordNetLemmatizer()
@@ -37,6 +52,11 @@ def tokenize(text):
 
 
 def build_model():
+    """
+    Fuction to build model using pipeline, parameter tuning and RandomizedSearchCV
+    Output: 
+        clf_grid_model: model
+    """
     pipeline = Pipeline([
             ('vect', CountVectorizer(tokenizer=tokenize)),
             ('tfidf', TfidfTransformer()),
@@ -61,6 +81,9 @@ def build_model():
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
+    """
+    Evaluate and print the model performance
+    """
     y_pred = model.predict(X_test)
     # print the metrics
     for i, col in enumerate(category_names):
@@ -69,6 +92,9 @@ def evaluate_model(model, X_test, Y_test, category_names):
 
 
 def save_model(model, model_filepath):
+    """
+    Function to save the model
+    """
     dump(model, model_filepath)
 
 

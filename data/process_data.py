@@ -45,6 +45,12 @@ def clean_data(df):
 
 
 def save_data(df, database_filename):
+    """
+    Function to save the db file
+    Input: 
+        df: Dataframe to be saved
+        database_filename: db file name
+    """
     engine = sqlalchemy.create_engine('sqlite:///' + database_filename)
     df.to_sql('disaster_clean_data', engine, index=False)
 
