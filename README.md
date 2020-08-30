@@ -12,3 +12,7 @@
     `python run.py`
 
 3. Go to http://127.0.0.1:3001/
+
+### Sample Output:  
+![Sample Output1](https://github.com/Anshumank399/Disaster-Response-Classification/blob/master/Image1.PNG)  
+![Sample Output1](https://github.com/Anshumank399/Disaster-Response-Classification/blob/master/Image2.PNG)
