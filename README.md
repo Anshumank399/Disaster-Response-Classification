@@ -10,6 +10,7 @@ Many messages are recieved during a disaster which are meant for the relief team
 > nltk  
 > sklearn  
 > joblib  
+> flask  
 
 ### Scripts:  
 1. _model/train_classifier.py_: The ML pipeline for the classification using AdaBoost.  
