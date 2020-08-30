@@ -9,10 +9,10 @@ from sklearn.pipeline import Pipeline
 from sklearn.metrics import classification_report
 from sklearn.model_selection import RandomizedSearchCV, train_test_split
 from sklearn.multioutput import MultiOutputClassifier
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
-import joblib
-
+import pickle
+from joblib import dump
 
 def load_data(database_filepath):
     # load data from database
@@ -40,18 +40,23 @@ def build_model():
     pipeline = Pipeline([
             ('vect', CountVectorizer(tokenizer=tokenize)),
             ('tfidf', TfidfTransformer()),
-            ('clf', MultiOutputClassifier(RandomForestClassifier()))
+            ('clf', MultiOutputClassifier(AdaBoostClassifier()))
             ])
 
     parameters = {
-            'clf__estimator__n_estimators': [5, 40, 80, 100, 120, 160, 200],
-            'clf__estimator__criterion': ["gini", "entropy"],
-            'clf__estimator__max_depth': [5, 10, 15, 20, None],
-            'clf__estimator__max_features': ["sqrt", "log2"],
-            'clf__estimator__n_jobs': [-1]
+            'vect__stop_words': ['english',None],
+            'tfidf__smooth_idf': [True, False],
+            'tfidf__norm': ['l2','l1'],
+            'clf__estimator__learning_rate': [0.5, 1, 2],
+            'clf__estimator__n_estimators': [20, 60, 100]
             }
 
-    clf_grid_model = RandomizedSearchCV(pipeline, parameters, cv=3)
+    clf_grid_model = RandomizedSearchCV(pipeline,
+                                        parameters,
+                                        cv=3,
+                                        refit=True,
+                                        verbose=10,
+                                        n_jobs=-1)
     return clf_grid_model
 
 
@@ -64,7 +69,7 @@ def evaluate_model(model, X_test, Y_test, category_names):
 
 
 def save_model(model, model_filepath):
-    joblib.dump(model, model_filepath)
+    dump(model, model_filepath)
 
 
 def main():
